@@ -5,8 +5,9 @@
 double getCorrelation(PIXEL *image, PIXEL *pattern, int top_left_x, int top_left_y, int patternWidth, int patternHeight, unsigned int width)
 {
 
-    double img_average = 0, pattern_average = 0, img_sum = 0, pattern_sum = 0, img_sd = 0, pattern_sd = 0, img_sd_sum = 0, pattern_sd_sum = 0;
     int pixelsNo = patternHeight * patternWidth;
+    double img_average, pattern_average, img_standard_deviation, pattern_standard_deviation;
+    double img_sum = 0, pattern_sum = 0,img_sdSum = 0, pattern_sdSum = 0;
 
     int i, j;
     unsigned int img, ptn;
@@ -18,6 +19,7 @@ double getCorrelation(PIXEL *image, PIXEL *pattern, int top_left_x, int top_left
             pattern_sum += pattern[i * patternWidth + j].R;
         }
 
+
     img_average = img_sum / pixelsNo;
     pattern_average = pattern_sum / pixelsNo;
 
@@ -28,13 +30,13 @@ double getCorrelation(PIXEL *image, PIXEL *pattern, int top_left_x, int top_left
             img = image[(i + top_left_x) * width + (j + top_left_y)].R;
             ptn = pattern[i * patternWidth + j].R;
 
-            img_sd_sum += (img - img_average)*(img - img_average);
-            pattern_sd_sum += (ptn - pattern_average)*(ptn - pattern_average);
+            img_sdSum += (img - img_average)*(img - img_average);
+            pattern_sdSum += (ptn - pattern_average)*(ptn - pattern_average);
         }
 
     // sd = standard deviation
-    img_sd = sqrt(1.0 / (pixelsNo - 1) * img_sd_sum);
-    pattern_sd = sqrt(1.0 / (pixelsNo - 1) * pattern_sd_sum);
+    img_standard_deviation = sqrt(1.0 / (pixelsNo - 1) * img_sdSum);
+    pattern_standard_deviation = sqrt(1.0 / (pixelsNo - 1) * pattern_sdSum);
 
 
     double correl = 0;
@@ -46,7 +48,7 @@ double getCorrelation(PIXEL *image, PIXEL *pattern, int top_left_x, int top_left
             img = image[(i + top_left_x) * width + (j + top_left_y)].R;
             ptn = pattern[i * patternWidth + j].R;
 
-            correl += 1.0 / (img_sd * pattern_sd) * (img - img_average) * (ptn - pattern_average);
+            correl += 1.0 / (img_standard_deviation * pattern_standard_deviation) * (img - img_average) * (ptn - pattern_average);
         }
 
     correl = 1.0 / pixelsNo * correl;
