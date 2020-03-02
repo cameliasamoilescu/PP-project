@@ -323,16 +323,16 @@ void encryption(char *image, char *encrypted_img_name, char *key_file_name)
 
     PIXEL *encrypted_img = (PIXEL*) malloc(sizeof(PIXEL) * img_dim);
 
-    unsigned int *secvention = R_Generation(2 * img_height * img_width - 1, seed);
+    unsigned int *sequence = R_Generation(2 * img_height * img_width - 1, seed);
 
-    encrypted_img[0] = xor_pixel_int(xor_pixel_int(permuted_pixels[0], starting_value), secvention[img_dim]);
+    encrypted_img[0] = xor_pixel_int(xor_pixel_int(permuted_pixels[0], starting_value), sequence[img_dim]);
 
     unsigned int i, j;
     for(i = 1; i < img_dim; i ++)
-        encrypted_img[i] = xor_pixel_int(xor_pixel_pixel(encrypted_img[i - 1], permuted_pixels[i]), secvention[img_dim + i]);
+        encrypted_img[i] = xor_pixel_int(xor_pixel_pixel(encrypted_img[i - 1], permuted_pixels[i]), sequence[img_dim + i]);
 
     createImage(image, encrypted_img_name, encrypted_img);
-    free(secvention);
+    free(sequence);
     free(encrypted_img);
 }
 
@@ -364,7 +364,7 @@ void decryption(char *image, char *encrypted_img_name, char *decrypted_img_name,
 
     unsigned int img_dim = img_height * img_width;
 
-    unsigned int *secvention = R_Generation(2 * img_dim - 1, seed);
+    unsigned int *sequence = R_Generation(2 * img_dim - 1, seed);
 
     unsigned int *permutation = random_permutation(img_dim, seed);
 
@@ -377,9 +377,9 @@ void decryption(char *image, char *encrypted_img_name, char *decrypted_img_name,
 
     PIXEL *intermediate_encryp_img = (PIXEL*) malloc(img_dim * sizeof(PIXEL));
 
-    intermediate_encryp_img[0] = xor_pixel_int(xor_pixel_int(LinearImg[0], secvention[img_dim]), starting_value);
+    intermediate_encryp_img[0] = xor_pixel_int(xor_pixel_int(LinearImg[0], sequence[img_dim]), starting_value);
     for(i = 1; i < img_dim; i ++)
-        intermediate_encryp_img[i] = xor_pixel_int(xor_pixel_pixel(LinearImg[i-1], LinearImg[i]), secvention[img_dim + i]);
+        intermediate_encryp_img[i] = xor_pixel_int(xor_pixel_pixel(LinearImg[i-1], LinearImg[i]), sequence[img_dim + i]);
 
     PIXEL *decrypted_img = (PIXEL*) malloc (img_dim * sizeof(PIXEL));
 
@@ -390,7 +390,7 @@ void decryption(char *image, char *encrypted_img_name, char *decrypted_img_name,
     free(LinearImg);
     free(intermediate_encryp_img);
     free(decrypted_img);
-    free(secvention);
+    free(sequence);
     free(permutation);
     free(inverse_permutation);
 }
